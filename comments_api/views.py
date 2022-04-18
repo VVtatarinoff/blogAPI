@@ -5,9 +5,14 @@ from comments_api.serializers import ArticleCreateSerializer
 
 
 class ArticleCreateView(APIView):
-    """Добавление отзыва к фильму"""
+    """Добавление статьи"""
+
     def post(self, request):
         article = ArticleCreateSerializer(data=request.data)
         if article.is_valid():
-            article.save()
-        return Response(status=201)
+            try:
+                article.save()
+            except Exception:
+                return Response({"error": {"code": 1, "msg": "ошибка записи в БД"}}, status=400)
+            return Response(status=201)
+        return Response({"error": {"code": 2, "msg": article.errors['title']}}, status=400)

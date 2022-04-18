@@ -5,7 +5,7 @@ from django.db import models
 
 class Article(models.Model):
     """статья"""
-    title = models.CharField("Название", max_length=100)
+    title = models.CharField("Название", max_length=100, unique=True)
     body = models.TextField("Текст статьи")
 
     def __str__(self):
