@@ -37,7 +37,7 @@ class FilterCommentListSerializer(serializers.ListSerializer):
 
 class CommentViewSerializer(serializers.ModelSerializer):
     """Вывод комментариев"""
-    children = RecursiveSerializer(many=True)
+    #children = RecursiveSerializer(many=True)
 
     class Meta:
         # list_serializer_class = FilterCommentListSerializer

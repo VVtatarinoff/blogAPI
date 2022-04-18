@@ -1,3 +1,4 @@
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -19,9 +20,10 @@ class ArticleCreateView(APIView):
         return Response({"error": {"code": 2, "msg": article.errors['title']}}, status=400)
 
 
-class CommentView(APIView):
+class CommentView(GenericAPIView):
     """Добавление комментария к статье"""
     NOT_NUMBER_ERROR = {"error": {"code":3, "msg":"параметр должен быть числом"}}
+    serializer_class = CommentViewSerializer
 
     def get(self, request):
         if article := request.query_params.get('article', None):
@@ -30,8 +32,13 @@ class CommentView(APIView):
             except ValueError:
                 return Response(self.NOT_NUMBER_ERROR, status=400)
             comments = Comments.objects.filter(article=article, parent=None)
-            serializer = CommentViewSerializer(comments, many=True)
-            return Response(serializer.data)
+            data = []
+            for n in comments:
+                data.append(self.recursive_node_to_dict(n))
+
+            return Response(data)
+            #serializer = CommentViewSerializer(comments, many=True)
+            #return Response(serializer.data)
         elif parent := request.query_params.get('parent', None):
             try:
                 parent = int(article)
@@ -39,3 +46,12 @@ class CommentView(APIView):
                 return Response(self.NOT_NUMBER_ERROR, status=400)
 
         return Response({"error": {"code":3, "msg":"нужно указать либо article либо parent"}}, status=400)
+
+    def recursive_node_to_dict(self, node, level=2):
+        if node.level == level:
+            return
+        result = self.get_serializer(instance=node).data
+        children = [self.recursive_node_to_dict(c) for c in node.get_children()]
+        if children:
+            result["children"] = children
+        return result
