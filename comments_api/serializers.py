@@ -25,3 +25,21 @@ class ArticleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = "__all__"
+
+
+class FilterCommentListSerializer(serializers.ListSerializer):
+    """Фильтр комментариев, только parents"""
+
+    def to_representation(self, data):
+        data = data.filter(parent=None)
+        return super().to_representation(data)
+
+
+class CommentViewSerializer(serializers.ModelSerializer):
+    """Вывод комментариев"""
+    children = RecursiveSerializer(many=True)
+
+    class Meta:
+        # list_serializer_class = FilterCommentListSerializer
+        model = Comments
+        fields = ("id", "name", "text", "children")

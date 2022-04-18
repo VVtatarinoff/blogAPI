@@ -20,4 +20,5 @@ from comments_api import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("article/", views.ArticleCreateView.as_view()),
+    path("comment/", views.CommentView.as_view()),
 ]

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'comments_api.apps.CommentsApiConfig',
     'rest_framework',
+    'mptt',
 ]
 
 MIDDLEWARE = [
