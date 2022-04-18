@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -24,6 +25,8 @@ class CommentView(GenericAPIView):
     """Добавление комментария к статье"""
     NOT_NUMBER_ERROR = {"error": {"code":3, "msg":"параметр должен быть числом"}}
     serializer_class = CommentViewSerializer
+    def get_queryset(self):
+        pass
 
     def get(self, request):
         if article := request.query_params.get('article', None):
