@@ -35,7 +35,7 @@ class CommentView(GenericAPIView):
             except ValueError:
                 return Response(self.NOT_NUMBER_ERROR, status=400)
             # comments = Comments.objects.filter(article=article, parent=None)
-            data = []
+            #data = []
             # for n in self.queryset.all():
             # root_object = n.get_root()
             # tree = get_cached_trees(queryset=self.queryset.all())
@@ -43,27 +43,38 @@ class CommentView(GenericAPIView):
             #
             # return Response(data)
             nn = Comments.objects.filter(article=article, level__lt=3)
-            tree = get_cached_trees(queryset=nn.all())
-            for node in tree:
-                data.append(self.serializable_object(node))
+
+            #tree = get_cached_trees(queryset=nn.all())
+            #for node in tree:
+            #    data.append(self.serializable_object(node))
             # serializer = CommentViewSerializer(
             #     self.queryset.filter(article=article),
             #     many=True)
-            return Response(data)
+            # return Response(data)
         elif parent := request.query_params.get('parent', None):
 
             try:
-                parent = int(article)
+                parent = int(parent)
             except ValueError:
                 return Response(self.NOT_NUMBER_ERROR, status=400)
+            nn = Comments.objects.filter(parent=parent)
+        else:
 
-        return Response({"error": {"code": 3, "msg": "нужно указать либо article либо parent"}}, status=400)
+            return Response({"error": {"code": 3, "msg": "нужно указать либо article либо parent"}}, status=400)
+        data = []
+        tree = get_cached_trees(queryset=nn.all())
+        for node in tree:
+            data.append(self.serializable_object(node))
+        # serializer = CommentViewSerializer(
+        #     self.queryset.filter(article=article),
+        #     many=True)
+        return Response(data)
 
     def serializable_object(self, node):
-        "Recurse into tree to build a serializable object"
-        obj = {'name': node.name, 'id': node.pk, 'children': []}
-        obj = CommentViewSerializer(instance=node).data
-        obj['children'] = []
+        "Рекурсивно проходит с головы дерева для создания вложенного словаря"
+        obj = {'name': node.name, 'id': node.pk, "text":node.text,'children': []}
+        # obj = CommentViewSerializer(instance=node).data
+        # obj['children'] = []
         for child in node.get_children():
             obj['children'].append(self.serializable_object(child))
         return obj
