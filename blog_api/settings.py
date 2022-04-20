@@ -62,6 +62,7 @@ MIDDLEWARE = [
 
 ]
 
+
 ROOT_URLCONF = 'blog_api.urls'
 
 REST_FRAMEWORK = {
