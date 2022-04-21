@@ -60,3 +60,26 @@ class CommentView(GenericAPIView):
         for child in node.get_children():
             obj['children'].append(self.serializable_object(child))
         return obj
+
+    def post(self, request):
+        nn = self.get_query(request)
+        return Response({"data":1})
+
+    def get_query(self, request):
+        if article := request.query_params.get('article', None):
+            try:
+                article = int(article)
+            except ValueError:
+                return Response(self.NOT_NUMBER_ERROR, status=400)
+        elif parent := request.query_params.get('parent', None):
+            try:
+                parent = int(parent)
+            except ValueError:
+                return Response(self.NOT_NUMBER_ERROR, status=400)
+            try:
+                parent_node = Comments.objects.get(id=parent)
+            except ObjectDoesNotExist:
+                return Response({"error": {"code": 4, "msg": "нет такой записи"}}, status=404)
+        else:
+
+            return Response({"error": {"code": 3, "msg": "нужно указать либо article либо parent"}}, status=400)

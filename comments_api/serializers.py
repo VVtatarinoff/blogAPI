@@ -38,15 +38,8 @@ class FilterCommentListSerializer(serializers.ListSerializer):
 
 class CommentViewSerializer(serializers.ModelSerializer):
     """Вывод комментариев"""
-    # children = RecursiveSerializer(many=True)
-    # children = SerializerMethodField(source='get_children')
 
     class Meta:
-        # list_serializer_class = FilterCommentListSerializer
         model = Comments
-        fields = ("id", "name", "text", "children")
+        fields = ("name", "text")
 
-    # def get_children(self, obj):
-    #     children = self.context['children'].get(obj.id, [])
-    #     serializer = CommentViewSerializer(children, many=True, context=self.context)
-    #     return serializer.data
