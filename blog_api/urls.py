@@ -23,8 +23,8 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('article', include(urlpatterns_article)),
-    path('comment', include(urlpatterns_comments))
+    path('article/', include(urlpatterns_article)),
+    path('comment/', include(urlpatterns_comments))
 ]
 
 if settings.DEBUG:
