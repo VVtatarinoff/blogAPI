@@ -14,6 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+
+import articles
+import comments
 from blog_api import settings
 
 from django.urls import path, include
@@ -21,13 +24,11 @@ from comments_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("article/", views.ArticleCreateView.as_view()),
-    path("comment/", views.CommentView.as_view()),
-
+    path('article', include(articles.urls)),
+    path('comment', include(comments.urls))
 ]
 
 if settings.DEBUG:
     import debug_toolbar
-
     urlpatterns = [path('_debug/', include(debug_toolbar.urls))
                    ] + urlpatterns

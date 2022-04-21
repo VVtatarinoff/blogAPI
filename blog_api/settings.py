@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'mptt',
     "debug_toolbar",
-    'comments_api.apps.CommentsApiConfig',
+    'comments.apps.CommentsConfig',
+    'articles.apps.ArticlesConfig',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +62,6 @@ MIDDLEWARE = [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 
 ]
-
 
 ROOT_URLCONF = 'blog_api.urls'
 
