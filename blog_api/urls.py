@@ -15,17 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 
-import articles
-import comments
+from articles.urls import urlpatterns_article
+from comments.urls import urlpatterns_comments
 from blog_api import settings
 
 from django.urls import path, include
-from comments_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('article', include(articles.urls)),
-    path('comment', include(comments.urls))
+    path('article', include(urlpatterns_article)),
+    path('comment', include(urlpatterns_comments))
 ]
 
 if settings.DEBUG:

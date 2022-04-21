@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from django.urls import path, include
-from comments import views
+from django.urls import path
+from articles import views
 
-urlpatterns = [
-    path("article/", views.ArticleCreateView.as_view()),
+urlpatterns_article = [
+    path("/", views.ArticleCreateView.as_view()),
 ]
