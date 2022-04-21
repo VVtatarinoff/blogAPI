@@ -1,7 +1,9 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, CreateAPIView
 from rest_framework.response import Response
 from mptt.utils import get_cached_trees
+from rest_framework.views import APIView
+
 from comments.models import Comments
 from comments.serializers import CommentViewSerializer
 
@@ -24,10 +26,7 @@ def get_tree(query):
     return data
 
 
-class ArticleCommentView(GenericAPIView):
-    serializer_class = CommentViewSerializer
-
-    queryset = Comments.objects.root_nodes()
+class ArticleCommentView(APIView):
 
     def get(self, request, pk):
         comments = Comments.objects.filter(article=pk, level__lt=3)
@@ -37,7 +36,7 @@ class ArticleCommentView(GenericAPIView):
 class CommentsToCommentView(GenericAPIView):
     serializer_class = CommentViewSerializer
 
-    queryset = Comments.objects.root_nodes()
+    queryset = Comments.objects.all()
 
     def get(self, request, pk):
         try:
@@ -46,3 +45,16 @@ class CommentsToCommentView(GenericAPIView):
             return Response({"error": {"code": 4, "msg": "нет такой записи"}}, status=404)
         comments = parent_node.get_descendants()
         return Response(get_tree(comments))
+
+
+class AddCommentView(APIView):
+
+    def post(self, request):
+        comment = CommentViewSerializer(data=request.data)
+        if comment.is_valid():
+            try:
+                comment.save()
+            except Exception as e:
+                return Response({"error": {"code": 1, "msg": "ошибка записи в БД"}}, status=400)
+            return Response(status=201)
+        return Response({"error": {"code": 2, "msg": comment.errors}}, status=400)
