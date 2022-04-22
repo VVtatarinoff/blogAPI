@@ -10,10 +10,13 @@ class Comments(MPTTModel):
     name = models.CharField("Имя", max_length=100)
     text = models.TextField("Комментарий", max_length=5000)
     parent = TreeForeignKey(
-        'self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True,
+        'self', verbose_name="Родитель",
+        on_delete=models.SET_NULL, blank=True,
         null=True, related_name="children"
     )
-    article = models.ForeignKey(Article, verbose_name="статья", on_delete=models.CASCADE,
+    article = models.ForeignKey(Article,
+                                verbose_name="статья",
+                                on_delete=models.CASCADE,
                                 related_name="comments")
 
     def __str__(self):

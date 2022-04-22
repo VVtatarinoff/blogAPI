@@ -1,8 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.generics import GenericAPIView, CreateAPIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from mptt.utils import get_cached_trees
-from rest_framework.views import APIView
 
 from comments.models import Comments
 from comments.serializers import CommentViewSerializer, ReviewSerializer
@@ -47,13 +46,20 @@ class CommentsToCommentView(GenericAPIView):
         try:
             parent_node = Comments.objects.get(id=pk)
         except ObjectDoesNotExist:
-            return Response({"error": {"code": 4, "msg": "нет такой записи"}}, status=404)
+            return Response({"error": {"code": 4,
+                                       "msg": "нет такой записи"}},
+                            status=404)
         comments = parent_node.get_descendants()
         return Response(get_tree(comments))
 
 
 class AddCommentView(GenericAPIView):
-    """ добавление комментария, передаваемые параметры
+    """ добавление комментария
+    article - id статьи, обязательный параметр
+    parent - необязательное поле, id комментария-родителя
+    в случае указания обоих полей производится проверка:
+    parent комментарий должен иметь такой же article
+
     """
     serializer_class = CommentViewSerializer
     queryset = Comments.objects.all()
@@ -63,7 +69,11 @@ class AddCommentView(GenericAPIView):
         if comment.is_valid():
             try:
                 comment.save()
-            except Exception as e:
-                return Response({"error": {"code": 1, "msg": "ошибка записи в БД"}}, status=400)
+            except Exception:
+                return Response({"error": {"code": 1,
+                                           "msg": "ошибка записи в БД"}},
+                                status=400)
             return Response(comment.data, status=201)
-        return Response({"error": {"code": 2, "msg": comment.errors}}, status=400)
+        return Response({"error": {"code": 2,
+                                   "msg": comment.errors}},
+                        status=400)
