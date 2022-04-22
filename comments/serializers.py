@@ -1,10 +1,11 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
 from comments.models import Comments
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    """Добавление комментария"""
+    """Вывод комментариев"""
 
     class Meta:
         model = Comments
@@ -12,17 +13,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentViewSerializer(serializers.ModelSerializer):
-    """Вывод комментариев"""
+    """Добавление комментария"""
 
-    def is_valid(self, raise_exception=False):
-        validation = super().is_valid()
-        parent = self.validated_data.get('parent')
-        if parent and validation:
-            if parent.article_id != self.validated_data.get('article').id:
-                validation = False
-                self._errors[
-                    'Not matching'] = "Article не совпадает с article родителя"
-        return validation
+    def validate(self, attrs):
+        parent = attrs.get('parent')
+        article = attrs.get('article')
+
+        if parent and article and parent.article_id != article.id:
+            raise ValidationError(detail="Article не совпадает с article родителя")
+        return super().validate(attrs)
 
     class Meta:
         model = Comments

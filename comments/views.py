@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, CreateAPIView
 from rest_framework.response import Response
 from mptt.utils import get_cached_trees
 
@@ -53,7 +53,7 @@ class CommentsToCommentView(GenericAPIView):
         return Response(get_tree(comments))
 
 
-class AddCommentView(GenericAPIView):
+class AddCommentView(CreateAPIView):
     """ добавление комментария
     article - id статьи, обязательный параметр
     parent - необязательное поле, id комментария-родителя
@@ -63,17 +63,3 @@ class AddCommentView(GenericAPIView):
     """
     serializer_class = CommentViewSerializer
     queryset = Comments.objects.all()
-
-    def post(self, request):
-        comment = CommentViewSerializer(data=request.data)
-        if comment.is_valid():
-            try:
-                comment.save()
-            except Exception:
-                return Response({"error": {"code": 1,
-                                           "msg": "ошибка записи в БД"}},
-                                status=400)
-            return Response(comment.data, status=201)
-        return Response({"error": {"code": 2,
-                                   "msg": comment.errors}},
-                        status=400)
