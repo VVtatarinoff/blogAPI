@@ -1,0 +1,28 @@
+version: "3.3"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - postgres_tm:/var/lib/postgresql/data
+    env_file:
+      - .env_example
+    ports:
+      - 5432:5432
+  web:
+    container_name: django_blog_api
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    tty: true
+    command: docker/start.sh
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env_example
+    depends_on:
+      - db
+
+volumes:
+  postgres_tm:
