@@ -1,2 +1,1 @@
-# blogAPI
-test task
+# REST API для системы комментариев блога

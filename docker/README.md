@@ -13,6 +13,6 @@ For this:
 
 Notes
     - you could specify your own environment variables in file .env_example
-    - the docker would create volume postgres_tm
+    - the docker would create volume postgres_bi
     - if you want the admin panel to be shown you should create a superuser:
         docker exec -it django_blog_api python manage.py createsuperuser

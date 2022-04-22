@@ -5,11 +5,11 @@ services:
     image: postgres
     restart: always
     volumes:
-      - postgres_tm:/var/lib/postgresql/data
+      - postgres_bi:/var/lib/postgresql/data
     env_file:
       - .env_example
     ports:
-      - 5432:5432
+      - 5000:5000
   web:
     container_name: django_blog_api
     build:
@@ -25,4 +25,4 @@ services:
       - db
 
 volumes:
-  postgres_tm:
+  postgres_bi:
